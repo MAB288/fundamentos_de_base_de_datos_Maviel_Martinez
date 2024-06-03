@@ -1,72 +1,74 @@
 CREATE TABLE Cliente (
     num_cliente INT PRIMARY KEY,
-    Curp CHAR(18),
-    Nombre_Cliente VARCHAR(50),
-    ap_pat_cliente VARCHAR(50),
+    curp CHAR(18) NOT NULL,
+    nombre_cliente VARCHAR(50) NOT NULL,
+    ap_pat_cliente VARCHAR(50) NOT NULL,
     ap_mat_cliente VARCHAR(50),
-    fecha_nacimiento VARCHAR(10),
-    Rfc_telefono INT
+    fecha_nacimiento DATE,
+    id_telefono INT,
+    FOREIGN KEY (id_telefono) REFERENCES telefono(id_telefono)
 );
 
-CREATE TABLE compra (
-    Num_producto INT,
-    Num_Cliente INT,
-    PRIMARY KEY (Num_producto, Num_Cliente),
-    FOREIGN KEY (Num_producto) REFERENCES producto(Num_producto),
-    FOREIGN KEY (Num_Cliente) REFERENCES Cliente(num_cliente)
-);
-
-CREATE TABLE producto (
-    Num_producto INT PRIMARY KEY,
-    precio INT,
-    tamalo VARCHAR(50),
+CREATE TABLE Producto (
+    num_producto INT PRIMARY KEY,
+    precio DECIMAL(10, 2) NOT NULL,
+    tamano VARCHAR(50),
     id_nombre INT,
     codigo INT
 );
 
+CREATE TABLE Compra (
+    num_producto INT,
+    num_cliente INT,
+    PRIMARY KEY (num_producto, num_cliente),
+    FOREIGN KEY (num_producto) REFERENCES Producto(num_producto),
+    FOREIGN KEY (num_cliente) REFERENCES Cliente(num_cliente)
+);
+
+CREATE TABLE Vendedor (
+    num_vendedor INT PRIMARY KEY,
+    nombre_vendedor VARCHAR(50) NOT NULL,
+    apellido_pat VARCHAR(50) NOT NULL,
+    apellido_mat VARCHAR(50),
+    rfc VARCHAR(13) NOT NULL,
+    id_telefono INT,
+    FOREIGN KEY (id_telefono) REFERENCES telefono(id_telefono)
+);
+
 CREATE TABLE Venta (
-    Num_producto INT,
-    Num_vendedor INT,
-    PRIMARY KEY (Num_producto, Num_vendedor),
-    FOREIGN KEY (Num_producto) REFERENCES producto(Num_producto),
-    FOREIGN KEY (Num_vendedor) REFERENCES vendedor(Num_vendedor)
-);
-
-CREATE TABLE vendedor (
-    Num_vendedor INT PRIMARY KEY,
-    Nombre_vendedor VARCHAR(50),
-    Apellido_pat VARCHAR(50),
-    Apellido_mat VARCHAR(50),
-    RFC VARCHAR(13),
-    Rfc_telefono INT
-);
-
-CREATE TABLE Suministra (
-    Num_producto INT,
-    Num_provedor INT,
-    PRIMARY KEY (Num_producto, Num_provedor),
-    FOREIGN KEY (Num_producto) REFERENCES producto(Num_producto),
-    FOREIGN KEY (Num_provedor) REFERENCES Proveedor(Num_provedor)
+    num_producto INT,
+    num_vendedor INT,
+    PRIMARY KEY (num_producto, num_vendedor),
+    FOREIGN KEY (num_producto) REFERENCES Producto(num_producto),
+    FOREIGN KEY (num_vendedor) REFERENCES Vendedor(num_vendedor)
 );
 
 CREATE TABLE Proveedor (
-    Nombre_provedor VARCHAR(50),
-    Apellido_paterno VARCHAR(50),
-    Apellido_materno VARCHAR(50),
-    Num_provedor INT PRIMARY KEY,
-    NIF VARCHAR(50),
-    Curp CHAR(18),
-    Rfc_telefono INT
+    num_proveedor INT PRIMARY KEY,
+    nombre_proveedor VARCHAR(50) NOT NULL,
+    apellido_paterno VARCHAR(50) NOT NULL,
+    apellido_materno VARCHAR(50),
+    nif VARCHAR(50) NOT NULL,
+    curp CHAR(18) NOT NULL,
+    id_telefono INT,
+    FOREIGN KEY (id_telefono) REFERENCES telefono(id_telefono)
 );
 
-CREATE TABLE telefono (
+CREATE TABLE Suministra (
+    num_producto INT,
+    num_proveedor INT,
+    PRIMARY KEY (num_producto, num_proveedor),
+    FOREIGN KEY (num_producto) REFERENCES Producto(num_producto),
+    FOREIGN KEY (num_proveedor) REFERENCES Proveedor(num_proveedor)
+);
+
+CREATE TABLE Telefono (
     id_telefono INT PRIMARY KEY,
-    Numero_Telefono VARCHAR(15)
+    numero_telefono VARCHAR(15) NOT NULL
 );
 
 
-
-INSERT INTO Cliente VALUES
+INSERT INTO Cliente (num_cliente, curp, nombre_cliente, ap_pat_cliente, ap_mat_cliente, fecha_nacimiento, id_telefono) VALUES
 (1, 'CURP001234567890', 'Juan', 'Perez', 'Gomez', '1980-01-01', 1),
 (2, 'CURP002345678901', 'Maria', 'Garcia', 'Lopez', '1990-02-02', 2),
 (3, 'CURP003456789012', 'Luis', 'Rodriguez', 'Martinez', '1985-03-03', 3),
@@ -74,23 +76,21 @@ INSERT INTO Cliente VALUES
 (5, 'CURP005678901234', 'Carlos', 'Martinez', 'Sanchez', '1982-05-05', 5);
 
 
-INSERT INTO producto VALUES
-(1, 100, 'pequeño', 1, 1001),
-(2, 200, 'mediano', 2, 1002),
-(3, 300, 'grande', 3, 1003),
-(4, 400, 'extra-grande', 4, 1004),
+INSERT INTO Producto (num_producto, precio, tamano, id_nombre, codigo) VALUES
+(1, 100.00, 'pequeño', 1, 1001),
+(2, 200.00, 'mediano', 2, 1002),
+(3, 300.00, 'grande', 3, 1003),
+(4, 400.00, 'extra-grande', 4, 1004);
 
 
-
-INSERT INTO compra VALUES
+INSERT INTO Compra (num_producto, num_cliente) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
-(4, 4),
-(5, 5);
+(4, 4);
 
 
-INSERT INTO vendedor VALUES
+INSERT INTO Vendedor (num_vendedor, nombre_vendedor, apellido_pat, apellido_mat, rfc, id_telefono) VALUES
 (1, 'Pedro', 'Sanchez', 'Lopez', 'RFC123456789', 1),
 (2, 'Lucia', 'Ramirez', 'Martinez', 'RFC234567890', 2),
 (3, 'Jose', 'Fernandez', 'Gonzalez', 'RFC345678901', 3),
@@ -98,7 +98,22 @@ INSERT INTO vendedor VALUES
 (5, 'Miguel', 'Ortiz', 'Hernandez', 'RFC567890123', 5);
 
 
-INSERT INTO Venta VALUES
+INSERT INTO Venta (num_producto, num_vendedor) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4);
+
+
+INSERT INTO Proveedor (num_proveedor, nombre_proveedor, apellido_paterno, apellido_materno, nif, curp, id_telefono) VALUES
+(1, 'Pablo', 'Hernandez', 'Lopez', 'NIFA001', 'P0HE3L934NP27N763', 1),
+(2, 'Marta', 'Martinez', 'Martinez', 'NIFB002', 'M0MA3M934NP27N763', 2),
+(3, 'Rufino', 'Mendosa', 'Lopez', 'NIFC003', 'R0ME3L934NP27N763', 3),
+(4, '', 'PaternoD', 'MaternoD', 'NIFD004', 'CURPD004567890123', 4),
+(5, 'Proveedor E', 'PaternoE', 'MaternoE', 'NIFE005', 'CURPE005678901234', 5);
+
+
+INSERT INTO Suministra (num_producto, num_proveedor) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
@@ -106,23 +121,7 @@ INSERT INTO Venta VALUES
 (5, 5);
 
 
-INSERT INTO Proveedor VALUES
-('Pablo', 'hernandez', 'lopez', 1, 'NIFA001', 'P0HE3L934NP27N763', 1),
-('Marta', 'martinez', 'martinez', 2, 'NIFB002', 'M0MA3M934NP27N763', 2),
-('Rufino', 'Mendosa', 'Lopez', 3, 'NIFC003', 'R0ME3L934NP27N763', 3),
-('', 'PaternoD', 'MaternoD', 4, 'NIFD004', 'CURPD004567890123', 4),
-('Proveedor E', 'PaternoE', 'MaternoE', 5, 'NIFE005', 'CURPE005678901234', 5);
-
-
-INSERT INTO Suministra VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 5);
-
-
-INSERT INTO telefono VALUES
+INSERT INTO Telefono (id_telefono, numero_telefono) VALUES
 (1, '9531234567'),
 (2, '5552345678'),
 (3, '9533456789'),
